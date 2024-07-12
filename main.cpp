@@ -6,6 +6,7 @@
 #include <math.h>
 #include <regex>
 #include <sstream>
+#include <iomanip>
 using namespace std;
 
 void parseInput(const string& input, float& amount, bool& a, string& date, bool& d, string& note, bool& n, vector<string>& tags) {
@@ -41,6 +42,22 @@ void parseInput(const string& input, float& amount, bool& a, string& date, bool&
             tags.push_back(tag);
         }
     }
+}
+
+string getCurrentDate() {
+    // Get the current time
+    time_t now = time(nullptr);
+    // Convert it to local time
+    tm* localTime = localtime(&now);
+
+    // Use stringstream to format the date
+    ostringstream dateStream;
+    dateStream << setw(2) << setfill('0') << localTime->tm_mday << '-'
+               << setw(2) << setfill('0') << localTime->tm_mon + 1 << '-'
+               << setw(2) << setfill('0') << (localTime->tm_year + 1900) % 100;
+
+    // Return the formatted date as a string
+    return dateStream.str();
 }
 
 int main() {
@@ -85,7 +102,7 @@ int main() {
       continue;
     }
     if (!d) {
-      
+      date = getCurrentDate();
     }
 
 
