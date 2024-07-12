@@ -4,7 +4,44 @@
 #include <vector>
 #include <chrono>
 #include <math.h>
+#include <regex>
+#include <sstream>
 using namespace std;
+
+void parseInput(const string& input, float& amount, bool& a, string& date, bool& d, string& note, bool& n, vector<string>& tags) {
+    regex amountRegex(R"([+-]?\d+(\.\d+)?)");
+    regex dateRegex(R"(-d\s+(\d{2}-\d{2}-\d{2}))");
+    regex noteRegex(R"(-n\s+([^"]*))");
+    regex tagsRegex(R"(-t\s+([\w,]+))");
+    smatch match;
+
+    if (regex_search(input, match, amountRegex)) {
+        amount = stof(match[0]);
+        a = true;
+    } 
+    else a = false;
+
+    if (regex_search(input, match, dateRegex)) {
+        date = match[1];
+        d = true;
+    } 
+    else d = false;
+
+    if (regex_search(input, match, noteRegex)) {
+        note = match[1];
+        n = true;
+    } 
+    else n = false;
+
+    if (regex_search(input, match, tagsRegex)) {
+        string tagsString = match[1];
+        stringstream ss(tagsString);
+        string tag;
+        while (getline(ss, tag, ',')) {
+            tags.push_back(tag);
+        }
+    }
+}
 
 int main() {
   cout << "no. of transactions: ";
@@ -13,71 +50,44 @@ int main() {
   cin.ignore();
 
   for (int i = 0; i < num_transactions; i++) {
-    // 1. type
-    // + -> gain money
-    // - -> lose money
-    // 2. amount
-    // 3. date
-    // dd-mm-yy
-    // 4. note
-    // 5. tags
-    // 2, 3, 4, 5 are comma separated, end with full stop
+
+    // +-amount -d dd-mm-yy -n note with spaces -t tag1,tag2,tag3
 
     string entry;
-    getline(cin, entry);
-    
+    char c;
+    while (true) {
+      c = cin.get();
+      if (c == '\n') break;
+      if (c == 8) { // handles backspace
+        if (!entry.empty()) {
+          entry.pop_back();
+          cout << "\b \b";
+        }
+      }
+      else entry += c;
+    }
+
     float amount = 0;
     string date;
     string note;
     vector<string> tags;
 
-    if (entry[0] == '+' || entry[0] == '-') {
+    bool a = false;
+    bool d = false;
+    bool n = false;
 
-      int idx = 1;
-      bool decimal = false;
-      int dec_power = 1;
-      while (entry[idx] != ',') {
-        if (entry[idx] == '.') {
-          decimal = true;
-        }
-        else {
-          if (decimal) {
-            amount += (entry[idx] - 48)*pow(0.1,dec_power);
-            dec_power++;
-          }
-          else {
-            amount *= 10;
-            amount += entry[idx] - 48;
-          }
-        }
-        idx++;
-      }
-      if (entry[0] == '-') amount *= -1;
-      
-      idx++;
-      for (int j = 0; j < 8; j++) {date += entry[idx + j];}
-      
-      idx++;
-      idx += 8;
-      while (entry[idx] != ',') {note += entry[idx++];}
-      
-      idx++;
-      string tag;
-      while (entry[idx] != '.') {
-        if (entry[idx] == ',') {
-          tags.push_back(tag);
-        while (entry[idx] != ',') {tag += entry[idx++];}
-          tag.clear();
-        }
-        else tag += entry[idx];
-        idx++;
-      }
-      if (!tag.empty()) tags.push_back(tag);
-    }
-    else {
-      cout << "invalid entry, try again\n";
+    parseInput(entry, amount, a, date, d, note, n, tags);
+
+
+    if (!a) {
+      cout << "no amount entered, try again\n";
       i--;
+      continue;
     }
+    if (!d) {
+      
+    }
+
 
     fstream fout;
     fout.open("expense_database.csv", ios::out | ios::app);
