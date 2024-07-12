@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
+#include <chrono>
+#include <math.h>
 using namespace std;
 
 int main() {
@@ -20,6 +22,7 @@ int main() {
     // 4. note
     // 5. tags
     // 2, 3, 4, 5 are comma separated, end with full stop
+
     string entry;
     getline(cin, entry);
     
@@ -32,14 +35,21 @@ int main() {
 
       int idx = 1;
       bool decimal = false;
+      int dec_power = 1;
       while (entry[idx] != ',') {
         if (entry[idx] == '.') {
           decimal = true;
-          idx++;
-          continue;
         }
-        amount *= decimal ? 10 : 0.1;
-        amount += entry[idx] - 48;
+        else {
+          if (decimal) {
+            amount += (entry[idx] - 48)*pow(0.1,dec_power);
+            dec_power++;
+          }
+          else {
+            amount *= 10;
+            amount += entry[idx] - 48;
+          }
+        }
         idx++;
       }
       if (entry[0] == '-') amount *= -1;
@@ -76,6 +86,11 @@ int main() {
       fout << ", " << s;
     }
     fout << "\n";
+    
+    amount = 0;
+    date.clear();
+    note.clear();
+    tags.clear();
 
   }
   

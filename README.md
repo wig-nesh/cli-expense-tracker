@@ -1,1 +1,1 @@
-CLI Expense Tracker
+# CLI Expense Tracker
