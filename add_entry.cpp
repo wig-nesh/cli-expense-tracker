@@ -1,12 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <vector>
 #include <chrono>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <math.h>
 #include <regex>
 #include <sstream>
-#include <iomanip>
+#include <string>
+#include <vector>
 using namespace std;
 
 void parseInput(const string& input, float& amount, bool& a, string& date, bool& d, string& note, bool& n, vector<string>& tags) {
@@ -45,26 +45,20 @@ void parseInput(const string& input, float& amount, bool& a, string& date, bool&
 }
 
 string getCurrentDate() {
-    // Get the current time
     time_t now = time(nullptr);
-    // Convert it to local time
     tm* localTime = localtime(&now);
 
-    // Use stringstream to format the date
     ostringstream dateStream;
     dateStream << setw(2) << setfill('0') << localTime->tm_mday << '-'
                << setw(2) << setfill('0') << localTime->tm_mon + 1 << '-'
                << setw(2) << setfill('0') << (localTime->tm_year + 1900) % 100;
 
-    // Return the formatted date as a string
     return dateStream.str();
 }
 
-int main() {
-  cout << "no. of transactions: ";
-  int num_transactions;
-  cin >> num_transactions;
-  cin.ignore();
+int main(int argc, char* argv[]) {
+  
+  int num_transactions = stoi(argv[1]);
 
   for (int i = 0; i < num_transactions; i++) {
 
