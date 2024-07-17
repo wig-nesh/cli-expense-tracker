@@ -54,6 +54,8 @@ int main(int argc, char* argv[]) {
         string created_(created_size, ' ');
         in.read(&created_[0], created_size);
         
+        info.edited = edited_;
+        info.created = created_;
 
         account_info_hash[key] = info;
     }
