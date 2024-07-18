@@ -110,6 +110,9 @@ int main(int argc, char* argv[]) {
             account_info_hash[new_name] = info;
             account_info_hash.erase(old_name);
 
+            fstream fout;
+            fout.open("account_info_database.csv", ios::out);
+            fout << "name, amount, edited, created\n";
             ofstream out("account_info", ios::binary);
             size_t size = account_info_hash.size();
             out.write(reinterpret_cast<char*>(&size), sizeof(size));
@@ -125,13 +128,13 @@ int main(int argc, char* argv[]) {
                 size_t created_size = pair.second.created.size();
                 out.write(reinterpret_cast<const char*>(&created_size), sizeof(created_size));
                 out.write(pair.second.created.c_str(), created_size);  
+
+                fout << pair.first << ", " << pair.second.amount << ", " << pair.second.edited << ", " << pair.second.created << "\n";
             }
             out.close();
-        
-            fstream fout;
-            fout.open("account_info_database.csv", ios::out | ios::app);
-            fout << new_name << ", " << info.amount << ", " << info.edited << ", " << info.created << "\n";
             fout.close();
+        
+            
         }
         else cout << "Account name does not exist. Use create to make a new account.\n";
 
